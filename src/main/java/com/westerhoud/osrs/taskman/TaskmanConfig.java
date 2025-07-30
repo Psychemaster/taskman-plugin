@@ -6,8 +6,11 @@ import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 import net.runelite.client.config.ConfigSection;
 
-@ConfigGroup("taskman")
+@ConfigGroup(TaskmanConfig.CONFIG_GROUP)
 public interface TaskmanConfig extends Config {
+  String CONFIG_GROUP = "taskman";
+
+  String TASKMAN_COMMAND_KEY = "taskmanCommand";
 
   @ConfigSection(
       name = "Spreadsheet",
@@ -85,7 +88,7 @@ public interface TaskmanConfig extends Config {
 
   @ConfigItem(
       position = 8,
-      keyName = "taskmanCommand",
+      keyName = TASKMAN_COMMAND_KEY,
       name = "Enable !taskman chat command",
       description = "Send your current progress and task into the chat")
   default boolean taskmanCommand() {

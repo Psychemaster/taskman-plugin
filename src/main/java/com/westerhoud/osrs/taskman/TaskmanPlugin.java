@@ -44,7 +44,6 @@ import okhttp3.OkHttpClient;
 @PluginDescriptor(name = "Taskman")
 public class TaskmanPlugin extends Plugin {
 
-  private static final String TASKMAN_CONFIG_GROUP = "taskman";
   private static final String TASKMAN_CHAT_COMMAND = "!taskman";
   @Inject private Client client;
   @Inject private ClientThread clientThread;
@@ -67,7 +66,6 @@ public class TaskmanPlugin extends Plugin {
     // Sidebar
     final BufferedImage icon = ImageUtil.loadImageResource(getClass(), "icon.png");
     taskService = new TaskService(okHttpClient, gson);
-    chatCommandManager.registerCommandAsync(TASKMAN_CHAT_COMMAND, this::getTaskmanCommandData);
 
     sidePanel = new TaskmanPluginPanel(this, clientThread);
     navigationButton =
@@ -79,6 +77,10 @@ public class TaskmanPlugin extends Plugin {
             .build();
     clientToolbar.addNavigation(navigationButton);
     overlayManager.add(currentTaskOverlay);
+
+    if (config.taskmanCommand()) {
+      chatCommandManager.registerCommandAsync(TASKMAN_CHAT_COMMAND, this::getTaskmanCommandData);
+    }
   }
 
   @Override
@@ -86,7 +88,10 @@ public class TaskmanPlugin extends Plugin {
     // Sidebar
     clientToolbar.removeNavigation(navigationButton);
     overlayManager.remove(currentTaskOverlay);
-    chatCommandManager.unregisterCommand(TASKMAN_CHAT_COMMAND);
+
+    if (config.taskmanCommand()) {
+      chatCommandManager.unregisterCommand(TASKMAN_CHAT_COMMAND);
+    }
   }
 
   public void getCurrentTask(RequestCallback<Task> rc) throws IllegalArgumentException {
@@ -218,10 +223,17 @@ public class TaskmanPlugin extends Plugin {
   }
 
   @Subscribe
-  public void onConfigChanged(final ConfigChanged configChanged) {
-    if (configChanged.getGroup().equals(TASKMAN_CONFIG_GROUP)) {
-      log.info("Configuration changed");
-      SwingUtilities.invokeLater(() -> sidePanel.reset());
+  public void onConfigChanged(final ConfigChanged event) {
+    if (!event.getGroup().equals(TaskmanConfig.CONFIG_GROUP)) return;
+
+    log.info("Configuration changed");
+    SwingUtilities.invokeLater(() -> sidePanel.reset());
+
+    if (!event.getKey().equals(TaskmanConfig.TASKMAN_COMMAND_KEY)) return;
+    if (config.taskmanCommand()) {
+      chatCommandManager.registerCommandAsync(TASKMAN_CHAT_COMMAND, this::getTaskmanCommandData);
+    } else {
+      chatCommandManager.unregisterCommand(TASKMAN_CHAT_COMMAND);
     }
   }
 
