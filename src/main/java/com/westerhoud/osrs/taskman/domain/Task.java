@@ -17,6 +17,7 @@ public class Task {
 
   private String name;
   private String imageUrl;
+  private String tip;
   private transient BufferedImage image;
 
   public String getImageUrl() {
