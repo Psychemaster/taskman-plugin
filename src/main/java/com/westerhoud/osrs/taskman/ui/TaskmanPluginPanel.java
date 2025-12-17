@@ -15,8 +15,8 @@ import java.util.Map;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import lombok.NonNull;
@@ -42,7 +42,7 @@ public class TaskmanPluginPanel extends PluginPanel {
   private final JPanel progressPanel;
   private final PluginErrorPanel errorPanel;
   private final JShadowedLabel currentTaskLabel = new JShadowedLabel("Current task:");
-  private final JLabel taskTipLabel = new JShadowedLabel("Tip:");
+  private final JTextArea taskTipLabel = new JTextArea("Tip:");
   private final JShadowedLabel progressLabel = new JShadowedLabel("Progress:");
   private final JShadowedLabel imageLabel = new JShadowedLabel();
   private final JShadowedLabel nameLabel = new JShadowedLabel();
@@ -82,7 +82,9 @@ public class TaskmanPluginPanel extends PluginPanel {
     nameLabel.setFont(FontManager.getRunescapeSmallFont());
     nameLabel.setHorizontalAlignment(SwingConstants.LEFT);
     taskTipLabel.setFont(FontManager.getRunescapeSmallFont());
-    taskTipLabel.setHorizontalAlignment(SwingConstants.LEFT);
+    taskTipLabel.setEditable(false);
+    taskTipLabel.setLineWrap(true);
+    taskTipLabel.setWrapStyleWord(true);
     taskDataPanel.add(taskDataTitlePanel, BorderLayout.NORTH);
     taskDataPanel.add(imageLabel, BorderLayout.WEST);
     taskDataPanel.add(nameLabel, BorderLayout.CENTER);
@@ -137,7 +139,7 @@ public class TaskmanPluginPanel extends PluginPanel {
   private void updateTaskPanelContent(final Task task) {
     imageLabel.setIcon(new ImageIcon(task.getResizedImage(25, 25)));
     nameLabel.setText(task.getName());
-    taskTipLabel.setText("<html>" + task.getTip() + "</html>");
+    taskTipLabel.setText(task.getTip());
     taskPanel.setVisible(true);
   }
 
